@@ -90,6 +90,7 @@ static NSString *const PLATFORM_CHANNEL = @"plugins.flutter.io/share";
       NSString *mimeType = arguments[@"mimeType"];
       NSString *subject = arguments[@"subject"];
       NSString *text = arguments[@"text"];
+      NSNumber *enableSaveVideo = arguments[@"enableSaveVideo"];
 
       if (path.length == 0) {
         result([FlutterError errorWithCode:@"error"
@@ -103,7 +104,8 @@ static NSString *const PLATFORM_CHANNEL = @"plugins.flutter.io/share";
              withSubject:subject
                 withText:text
           withController:[UIApplication sharedApplication].keyWindow.rootViewController
-                atSource:originRect];
+                atSource:originRect
+       enableSaveVideo:enableSaveVideo.boolValue];
       result(nil);
     } else {
       result(FlutterMethodNotImplemented);
@@ -127,10 +129,15 @@ static NSString *const PLATFORM_CHANNEL = @"plugins.flutter.io/share";
 
 + (void)share:(NSArray *)shareItems
 withController:(UIViewController *)controller
-        atSource:(CGRect)origin {
+        atSource:(CGRect)origin
+enableSaveVideo: (BOOL) isEnabled {
   UIActivityViewController *activityViewController =
           [[UIActivityViewController alloc] initWithActivityItems:shareItems applicationActivities:nil];
   activityViewController.popoverPresentationController.sourceView = controller.view;
+    // remove SaveVideo option
+    if (!isEnabled) {
+        activityViewController.excludedActivityTypes = @[UIActivityTypeSaveToCameraRoll];
+    }
   if (!CGRectIsEmpty(origin)) {
     activityViewController.popoverPresentationController.sourceRect = origin;
   }
@@ -142,7 +149,8 @@ withController:(UIViewController *)controller
        withSubject:(NSString *)subject
           withText:(NSString *)text
     withController:(UIViewController *)controller
-          atSource:(CGRect)origin {
+          atSource:(CGRect)origin
+  enableSaveVideo: (BOOL) isEnabled {
   NSMutableArray *items = [[NSMutableArray alloc] init];
 
   if (subject != nil && subject.length != 0) {
@@ -160,7 +168,7 @@ withController:(UIViewController *)controller
     [items addObject:url];
   }
 
-   [self share:items withController:controller atSource:origin];
+   [self share:items withController:controller atSource:origin enableSaveVideo:isEnabled];
 }
 
 @end

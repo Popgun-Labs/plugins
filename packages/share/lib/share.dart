@@ -34,7 +34,7 @@ class Share {
   static Future<void> share(
     String text, {
     String subject,
-    Rect sharePositionOrigin,
+    Rect sharePositionOrigin
   }) {
     assert(text != null);
     assert(text.isNotEmpty);
@@ -67,17 +67,19 @@ class Share {
   /// May throw [PlatformException] or [FormatException]
   /// from [MethodChannel].
   static Future<void> shareFile(
-    File file, {
-    String mimeType,
-    String subject,
-    String text,
-    Rect sharePositionOrigin,
-  }) {
+      File file, {
+        String mimeType,
+        String subject,
+        String text,
+        Rect sharePositionOrigin,
+        bool enableSaveVideo
+      }) {
     assert(file != null);
     assert(file.existsSync());
     final Map<String, dynamic> params = <String, dynamic>{
       'path': file.path,
       'mimeType': mimeType ?? _mimeTypeForFile(file),
+      'enableSaveVideo': enableSaveVideo
     };
 
     if (subject != null) params['subject'] = subject;
