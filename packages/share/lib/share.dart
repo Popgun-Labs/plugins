@@ -72,7 +72,7 @@ class Share {
         String subject,
         String text,
         Rect sharePositionOrigin,
-        bool enableSaveVideo
+        bool enableSaveVideo // value will only consumed on iOS as Android does not have SaveVideo in SharePlugin
       }) {
     assert(file != null);
     assert(file.existsSync());
